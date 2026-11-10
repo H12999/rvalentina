@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi Zombie Lady ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Poppins:ital,wght@0,300;0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: radial-gradient(circle at center, #0f0518 0%, #030105 100%);
+            color: #f0f0f0;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Canvas de Partículas Estelares */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Pantalla de Inicio / Desbloqueo de Audio Cinematic */
+        #welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 1, 5, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+        }
+        #welcome-screen h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.3rem;
+            color: #ff4d6d;
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 3px;
+            text-shadow: 0 0 30px rgba(255, 77, 109, 0.9), 0 0 60px rgba(199, 125, 255, 0.5);
+            animation: titlePulse 3s infinite alternate;
+        }
+        @keyframes titlePulse {
+            0% { transform: scale(1); text-shadow: 0 0 20px rgba(255, 77, 109, 0.7); }
+            100% { transform: scale(1.03); text-shadow: 0 0 40px rgba(199, 125, 255, 0.9); }
+        }
+        .start-btn {
+            background: linear-gradient(135deg, #ff4d6d 0%, #c77dff 50%, #7b2cbf 100%);
+            color: #fff;
+            border: none;
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 35px rgba(255, 77, 109, 0.7);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 2px;
+        }
+        .start-btn:hover {
+            transform: scale(1.12);
+            box-shadow: 0 0 55px rgba(199, 125, 255, 1);
+        }
+
+        /* Encabezado */
+        header {
+            text-align: center;
+            margin-bottom: 12px;
+            z-index: 2;
+        }
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            background: linear-gradient(180deg, #ffffff 20%, #ff4d6d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 35px rgba(255, 77, 109, 0.6);
+            letter-spacing: 2px;
+        }
+        p.subtitle {
+            font-size: 1rem;
+            color: #d8b4fe;
+            font-style: italic;
+            margin-top: 4px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(216, 180, 254, 0.6);
+        }
+
+        /* Galería Holográfica 3D */
+        .gallery-wrapper {
+            position: relative;
+            z-index: 2;
+            padding: 14px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 0 50px rgba(255, 77, 109, 0.35), inset 0 0 25px rgba(255, 77, 109, 0.2);
+            border: 1px solid rgba(255, 77, 109, 0.4);
+            margin: 10px 0;
+            animation: borderGlow 5s infinite alternate ease-in-out;
+        }
+
+        @keyframes borderGlow {
+            0% { 
+                box-shadow: 0 0 35px rgba(255, 77, 109, 0.3), inset 0 0 15px rgba(255, 77, 109, 0.1); 
+                border-color: rgba(255, 77, 109, 0.3);
+            }
+            100% { 
+                box-shadow: 0 0 65px rgba(199, 125, 255, 0.6), inset 0 0 30px rgba(199, 125, 255, 0.25); 
+                border-color: rgba(199, 125, 255, 0.6);
+            }
+        }
+
+        .gallery-container {
+            width: 330px;
+            height: 380px;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #000;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(1.12) rotate(0.5deg);
+            filter: blur(8px);
+            transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1), transform 1.4s cubic-bezier(0.4, 0, 0.2, 1), filter 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+            filter: blur(0px);
+        }
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Subtítulos Neón Cinemáticos */
+        .lyrics-container {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            text-align: center;
+            padding: 0 20px;
+            z-index: 2;
+        }
+        #lyric-line {
+            font-size: 1.1rem;
+            color: #ffffff;
+            font-weight: 500;
+            text-shadow: 0 0 12px #ff4d6d, 0 0 25px #ff4d6d, 0 0 40px #c77dff, 0 0 60px #7b2cbf;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px) scale(0.92);
+        }
+        #lyric-line.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Reproductor Neón Futurista */
+        .music-player {
+            z-index: 2;
+            background: rgba(15, 8, 22, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 14px 24px;
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(199, 125, 255, 0.4);
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.8), inset 0 0 15px rgba(199, 125, 255, 0.1);
+        }
+        .music-player p {
+            font-size: 0.9rem;
+            color: #ff4d6d;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.7);
+        }
+        audio {
+            width: 100%;
+            outline: none;
+            height: 32px;
+            filter: invert(90%) hue-rotate(280deg);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Pantalla de Inicio -->
+    <div id="welcome-screen">
+        <h2>Un detalle especial para ti ❤️</h2>
+        <button class="start-btn" onclick="startExperience()">Toca para abrir ✨</button>
+    </div>
+
+    <header>
+        <h1>Para Ti, Mi Amor</h1>
+        <p class="subtitle">"I'm forever yours..."</p>
+    </header>
+
+    <!-- Galería Holográfica -->
+    <div class="gallery-wrapper">
+        <div class="gallery-container">
+            <div class="slide active"><img src="video/1.jfif" alt="Foto 1"></div>
+            <div class="slide"><img src="video/2.jfif" alt="Foto 2"></div>
+            <div class="slide"><img src="video/3.jfif" alt="Foto 3"></div>
+            <div class="slide"><img src="video/4.jfif" alt="Foto 4"></div>
+            <div class="slide"><img src="video/5.jfif" alt="Foto 5"></div>
+            <div class="slide"><img src="video/6.jfif" alt="Foto 6"></div>
+            <div class="slide"><img src="video/7.jfif" alt="Foto 7"></div>
+            <div class="slide"><img src="video/8.jfif" alt="Foto 8"></div>
+            <div class="slide"><img src="video/9.jfif" alt="Foto 9"></div>
+            <div class="slide"><img src="video/10.jfif" alt="Foto 10"></div>
+        </div>
+    </div>
+
+    <!-- Subtítulos Dinámicos -->
+    <div class="lyrics-container">
+        <div id="lyric-line">Preparando la melodía...</div>
+    </div>
+
+    <!-- Reproductor de Audio -->
+    <div class="music-player">
+        <p>♪ Zombie Lady ♪</p>
+        <audio id="myAudio" controls loop preload="auto">
+            <source src="video/video.mp4" type="video/mp4">
+            Tu navegador no soporta el audio.
+        </audio>
+    </div>
+
+    <script>
+        // Canvas de Partículas Estelares Avanzadas
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 15;
+                this.size = Math.random() * 3.5 + 0.8;
+                this.speedY = Math.random() * 1.5 + 0.3;
+                this.speedX = (Math.random() - 0.5) * 0.6;
+                this.opacity = Math.random() * 0.8 + 0.2;
+                this.color = Math.random() > 0.4 ? '255, 77, 109' : '199, 125, 255';
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                if (this.y < -15 || this.x < 0 || this.x > canvas.width) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Galería y Tiempos Milimétricos Exactos
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        const lyrics = [
+            { time: 0.0, text: "Solo déjame entrar a tu mundo" },
+            { time: 3.0, text: "Tú serás mi Emily" },
+            { time: 5.0, text: "Y yo seré tu Victor" },
+            { time: 7.0, text: "Y no me importa si duele" },
+            { time: 11.0, text: "Contigo la otra vida es brillante" },
+            { time: 14.0, text: "Oh, ¿no sabes que iría al cielo, al infierno..." },
+            { time: 17.0, text: "...a todas las siete maravillas?" },
+            { time: 19.0, text: "Solo por ser quien alimente tu hambre" },
+            { time: 22.0, text: "Ven y llévame a lo más profundo" },
+            { time: 26.0, text: "No dejes de devorar mi corazón, baby" },
+            { time: 29.0, text: "No dejes de darme el tuyo" },
+            { time: 32.0, text: "Oh, mi hermosa zombie lady" },
+            { time: 36.0, text: "La única a la que adoro" },
+            { time: 38.0, text: "Viviremos una y otra vez" },
+            { time: 40.0, text: "Una y otra vez..." },
+            { time: 46.0, text: "Oh, mi hermosa zombie lady" },
+            { time: 51.0, text: "Soy tuyo para siempre" }
+        ];
+
+        const lyricLine = document.getElementById('lyric-line');
+        const audio = document.getElementById('myAudio');
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        function updateLyrics() {
+            const currentTime = audio.currentTime;
+            let currentLyric = "";
+
+            for (let i = 0; i < lyrics.length; i++) {
+                if (currentTime >= lyrics[i].time) {
+                    currentLyric = lyrics[i].text;
+                }
+            }
+
+            if (lyricLine.innerText !== currentLyric) {
+                lyricLine.classList.remove('show');
+                setTimeout(() => {
+                    lyricLine.innerText = currentLyric;
+                    if(currentLyric) lyricLine.classList.add('show');
+                }, 40);
+            }
+        }
+
+        function startExperience() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            welcomeScreen.style.opacity = '0';
+            welcomeScreen.style.visibility = 'hidden';
+
+            audio.play().catch(err => console.log("Error al reproducir:", err));
+            setInterval(nextSlide, 3500);
+            audio.addEventListener('timeupdate', updateLyrics);
+        }
+    </script>
+
+</body>
+</html>
